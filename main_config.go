@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	ticket "go_project/ticket"
+	ticket_comments "go_project/ticket_comments"
 	"go_project/utils"
 	"net/http"
 )
@@ -16,6 +17,7 @@ func main() {
 
 	// Routers
 	ticket.TicketRouters(mux)
+	ticket_comments.TicketCommentRouters(mux)
 
 	err := http.ListenAndServe("localhost:8080", mux)
 	if err != nil {
