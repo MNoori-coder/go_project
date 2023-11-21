@@ -38,6 +38,12 @@ func Connection() {
 		log.Fatal(err5)
 	}
 
+	// Question Category
+	_, err6 := db.Exec("CREATE TABLE IF NOT EXISTS question_category (id INTEGER PRIMARY KEY, name TEXT, content TEXT)")
+	if err6 != nil {
+		log.Fatal(err6)
+	}
+
 	fmt.Println("Successfully connected!")
 	return
 }
