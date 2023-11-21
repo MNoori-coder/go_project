@@ -31,4 +31,22 @@ func TicketCommentRouters(mux *http.ServeMux) {
 		}
 	})
 
+	// DELETE
+	mux.HandleFunc("/ticket_comment/delete/", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodDelete {
+			DeleteTicketComment(w, r)
+		} else {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	})
+
+	// GET
+	mux.HandleFunc("/ticket_comment/id/", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			RetrieveTicketComment(w, r)
+		} else {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	})
+
 }
