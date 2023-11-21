@@ -125,3 +125,75 @@ func UpdateQuestion(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func DeleteQuestion(w http.ResponseWriter, r *http.Request) {
+	vars := strings.Split(strings.TrimSuffix(r.URL.Path, "/"), "/")
+	questionIDStr := vars[len(vars)-1]
+
+	questionID, err := strconv.Atoi(questionIDStr)
+	if err != nil {
+		http.Error(w, "Invalid ticket ID\n"+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	db, err := sql.Open("sqlite3", "my_db.db")
+	if err != nil {
+		http.Error(w, "Can not connect to db\n"+err.Error(), http.StatusBadRequest)
+		return
+	}
+	defer db.Close()
+
+	_, err = db.Exec("DELETE FROM question WHERE id=?", questionID)
+	if err != nil {
+		http.Error(w, "Error executing delete query\n"+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	response := map[string]interface{}{
+		"success": true,
+	}
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		http.Error(w, "Error encoding response to JSON\n", http.StatusInternalServerError)
+		return
+	}
+}
+
+func RetrieveQuestion(w http.ResponseWriter, r *http.Request) {
+	vars := strings.Split(strings.TrimSuffix(r.URL.Path, "/"), "/")
+	questionIDStr := vars[len(vars)-1]
+
+	questionID, err := strconv.Atoi(questionIDStr)
+	if err != nil {
+		http.Error(w, "Invalid ticket ID\n"+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	db, err := sql.Open("sqlite3", "my_db.db")
+	if err != nil {
+		http.Error(w, "Can not connect to db\n"+err.Error(), http.StatusBadRequest)
+		return
+	}
+	defer db.Close()
+
+	row := db.QueryRow("SELECT * FROM question WHERE id=?", questionID)
+
+	var question SchemaQuestion
+	err = row.Scan(&question.ID, &question.Title, &question.Content)
+	if err != nil {
+		http.Error(w, "Error retrieving ticket\n"+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	response := map[string]interface{}{
+		"data":    question,
+		"success": true,
+	}
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		http.Error(w, "Error encoding response to JSON\n", http.StatusInternalServerError)
+		return
+	}
+}

@@ -30,4 +30,22 @@ func QuestionRouters(mux *http.ServeMux) {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
 	})
+
+	// DELETE
+	mux.HandleFunc("/question/delete/", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodDelete {
+			DeleteQuestion(w, r)
+		} else {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	})
+
+	// GET
+	mux.HandleFunc("/question/id/", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			RetrieveQuestion(w, r)
+		} else {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	})
 }
