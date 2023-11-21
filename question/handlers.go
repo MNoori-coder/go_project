@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"encoding/json"
 	"net/http"
+	"strconv"
+	"strings"
 )
 
 func ListQuestion(w http.ResponseWriter, r *http.Request) {
@@ -25,7 +27,7 @@ func ListQuestion(w http.ResponseWriter, r *http.Request) {
 
 	for rows.Next() {
 		var question SchemaQuestion
-		err := rows.Scan(&question.ID, &question.Content, &question.Title)
+		err := rows.Scan(&question.ID, &question.Title, &question.Content)
 		if err != nil {
 			http.Error(w, "Can not scan row data\n"+err.Error(), http.StatusBadRequest)
 			return
@@ -42,6 +44,79 @@ func ListQuestion(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	response := map[string]interface{}{
 		"data":    questions,
+		"success": true,
+	}
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		http.Error(w, "Error encoding response to JSON\n", http.StatusInternalServerError)
+		return
+	}
+}
+
+func CreateQuestion(w http.ResponseWriter, r *http.Request) {
+	var question SchemaQuestion
+	err := json.NewDecoder(r.Body).Decode(&question)
+	if err != nil {
+		http.Error(w, "Error decoding request body\n"+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	db, err := sql.Open("sqlite3", "my_db.db")
+	if err != nil {
+		http.Error(w, "Can not connect to db\n"+err.Error(), http.StatusBadRequest)
+		return
+	}
+	defer db.Close()
+
+	_, err = db.Exec("INSERT INTO question (title, content) VALUES (?, ?)", question.Title, question.Content)
+	if err != nil {
+		http.Error(w, "Error executing insert query\n"+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	response := map[string]interface{}{
+		"success": true,
+	}
+
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		http.Error(w, "Error encoding response to JSON\n", http.StatusInternalServerError)
+		return
+	}
+}
+
+func UpdateQuestion(w http.ResponseWriter, r *http.Request) {
+	vars := strings.Split(strings.TrimSuffix(r.URL.Path, "/"), "/")
+	questionIDStr := vars[len(vars)-1]
+
+	questionID, err := strconv.Atoi(questionIDStr)
+	if err != nil {
+		http.Error(w, "Invalid ticket ID\n"+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	var question SchemaQuestion
+	err = json.NewDecoder(r.Body).Decode(&question)
+	if err != nil {
+		http.Error(w, "Error decoding request body\n"+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	db, err := sql.Open("sqlite3", "my_db.db")
+	if err != nil {
+		http.Error(w, "Can not connect to db\n"+err.Error(), http.StatusBadRequest)
+		return
+	}
+	defer db.Close()
+
+	_, err = db.Exec("UPDATE question SET title=?, content=? WHERE id=?", question.Title, question.Content, questionID)
+	if err != nil {
+		http.Error(w, "Error executing update query\n"+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	response := map[string]interface{}{
 		"success": true,
 	}
 
