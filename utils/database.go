@@ -25,6 +25,12 @@ func Connection() {
 		fmt.Println(err2.Error())
 	}
 
+	// Ticket Category
+	_, err4 := db.Exec("CREATE TABLE IF NOT EXISTS ticket_category (id INTEGER PRIMARY KEY, name TEXT, content TEXT)")
+	if err4 != nil {
+		fmt.Println(err2.Error())
+	}
+
 	fmt.Println("Successfully connected!")
 	return
 }
