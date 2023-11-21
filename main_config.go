@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	question "go_project/question"
 	ticket "go_project/ticket"
 	ticket_category "go_project/ticket_category"
 	ticket_comment "go_project/ticket_comment"
@@ -20,6 +21,7 @@ func main() {
 	ticket.TicketRouters(mux)
 	ticket_comment.TicketCommentRouters(mux)
 	ticket_category.TicketCategoryRouters(mux)
+	question.QuestionRouters(mux)
 
 	err := http.ListenAndServe("localhost:8080", mux)
 	if err != nil {

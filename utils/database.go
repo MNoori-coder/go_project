@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
+	"log"
 )
 
 func Connection() {
@@ -29,6 +30,12 @@ func Connection() {
 	_, err4 := db.Exec("CREATE TABLE IF NOT EXISTS ticket_category (id INTEGER PRIMARY KEY, name TEXT, content TEXT)")
 	if err4 != nil {
 		fmt.Println(err2.Error())
+	}
+
+	// Question
+	_, err5 := db.Exec("CREATE TABLE IF NOT EXISTS question (id INTEGER PRIMARY KEY, title TEXT, content TEXT)")
+	if err5 != nil {
+		log.Fatal(err5)
 	}
 
 	fmt.Println("Successfully connected!")
