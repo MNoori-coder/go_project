@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	like "go_project/like"
 	question "go_project/question"
 	question_category "go_project/question_category"
 	ticket "go_project/ticket"
@@ -24,6 +25,7 @@ func main() {
 	ticket_category.TicketCategoryRouters(mux)
 	question.QuestionRouters(mux)
 	question_category.QuestionCategoryRouters(mux)
+	like.LikeRouters(mux)
 
 	err := http.ListenAndServe("localhost:8080", mux)
 	if err != nil {
