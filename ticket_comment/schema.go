@@ -1,6 +1,6 @@
-package ticket_comments
+package ticket_comment
 
-type SchemaTicketComments struct {
+type SchemaTicketComment struct {
 	ID          int    `json:"id" validate:"required"`
 	UserID      int    `json:"user_id" validate:"required"`
 	SupporterID int    `json:"supporter_id" validate:"required"`

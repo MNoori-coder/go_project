@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	ticket "go_project/ticket"
-	ticket_comments "go_project/ticket_comments"
+	ticket_comments "go_project/ticket_comment"
 	"go_project/utils"
 	"net/http"
 )
